@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Home page</title>
+  </head>
+  <body>
+    <h1>Titanic survival prediction</h1>
+    <form action="/result">
+      {% csrf_token %}
+      
+      <p>Search for a book using titles or descriptions!</p>
+      <input type="text" name="pclass">
+      <br>
+
+      <input type="submit" value='Get Predictions'>
+    </form>
+  </body>
