@@ -208,7 +208,7 @@ class FinalWrapper():
         self.transformer.load_state_dict(torch.load('DjangoBookWebApp/research/query_model'))
         
     def GetRecs(self, query):
-        return self.search.make_query(query, 10)
+        return self.search.make_query(query, 3)
 
 # fr = FinalWrapper()
 # print(fr.GetRecs("snakes and air"))
