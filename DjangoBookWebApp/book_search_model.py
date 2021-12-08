@@ -18,7 +18,7 @@ import codecs
 
 from thefuzz import fuzz
 from thefuzz import process
-from gensim.models.word2vec import Word2Vec
+from gensim.models.word2vec import Word2Vec, KeyedVectors
 import gensim.downloader as gensim_api
 import nltk
 
@@ -130,7 +130,7 @@ class SearchAlgo():
             return None, False
         
         
-        query = torch.tensor([[self.w2v.wv[q] for q in query]])
+        query = torch.tensor([[self.w2v[q] for q in query]])
         vector = self.query_model.call(query)
         
         books = self.get_nearest_books(vector, num)
@@ -138,7 +138,7 @@ class SearchAlgo():
         
     def __parse_query(self, query):
         query = self.tokenizer.tokenize(query)
-        query = [word.lower() for word in query if (word.lower() not in self.stopwords and word.lower() in self.w2v.wv.key_to_index.keys())]
+        query = [word.lower() for word in query if (word.lower() not in self.stopwords and word.lower() in self.w2v.key_to_index.keys())]
         
         return(query,len(query)>0)
     
@@ -174,7 +174,7 @@ class FinalWrapper():
     def __init__(self):
         #raise NameError(os.getcwd())
         self.__init_files()
-        self.w2v = Word2Vec.load('DjangoBookWebApp/research/w2v.model')
+        self.w2v = KeyedVectors.load('DjangoBookWebApp/research/word2vec.wordvectors')
         self.stopwords = ['i', 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves', 'you', 'your', 'yours', 'yourself', 'yourselves', 'he', 'him', 'his', 'himself', 'she', 'her', 'hers', 'herself', 'it', 'its', 'itself', 'they', 'them', 'their', 'theirs', 'themselves', 'what', 'which', 'who', 'whom', 'this', 'that', 'these', 'those', 'am', 'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'having', 'do', 'does', 'did', 'doing', 'a', 'an', 'the', 'and', 'but', 'if', 'or', 'because', 'as', 'until', 'while', 'of', 'at', 'by', 'for', 'with', 'about', 'against', 'between', 'into', 'through', 'during', 'before', 'after', 'above', 'below', 'to', 'from', 'up', 'down', 'in', 'out', 'on', 'off', 'over', 'under', 'again', 'further', 'then', 'once', 'here', 'there', 'when', 'where', 'why', 'how', 'all', 'any', 'both', 'each', 'few', 'more', 'most', 'other', 'some', 'such', 'no', 'nor', 'not', 'only', 'own', 'same', 'so', 'than', 'too', 'very', 's', 't', 'can', 'will', 'just', 'don', 'should', 'now', 'd', 'll', 'm', 'o', 're', 've', 'y', 'ain', 'aren', 'couldn', 'didn', 'doesn', 'hadn', 'hasn', 'haven', 'isn', 'ma', 'mightn', 'mustn', 'needn', 'shan', 'shouldn', 'wasn', 'weren', 'won', 'wouldn']
         self.vectorWrapper = VectorWrapper(self.int_to_weight,self.book_to_int,self.int_to_book)        
         self.search = SearchAlgo(self.vectorWrapper,self.w2v,self.transformer, .8, self.book_to_int)
@@ -211,4 +211,4 @@ class FinalWrapper():
         return self.search.make_query(query, 10)
 
 # fr = FinalWrapper()
-# fr.GetRecs("snakes and air")
+# print(fr.GetRecs("snakes and air"))
